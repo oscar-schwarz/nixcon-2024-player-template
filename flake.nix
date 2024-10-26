@@ -21,7 +21,8 @@
           #!${pkgs.python3}/bin/python3
           import http.server                                                            
           import socketserver                                                           
-                                                                                      
+          from http.server import BaseHTTPRequestHandler
+
           PORT = 8080  # You can change this to any port you prefer                     
                                                                                       
           # Handler to serve files from the current directory                           
@@ -49,12 +50,13 @@
         buildPhase = ":";
         installPhase = ''
           mkdir -p $out/bin
-          echo -e """${pyFile}""" > $out/bin/webserver
+          echo -e '${pyFile}' > $out/bin/webserver
           chmod +x $out/bin/webserver
         '';
       };
     in
     {
+      inherit webserver;
       nixosConfigurations.server = nixpkgs.lib.nixosSystem {
         inherit system;
         modules = [
