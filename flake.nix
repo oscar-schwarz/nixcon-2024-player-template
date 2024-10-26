@@ -69,7 +69,7 @@
               # The nix derivation that will be used as the server process. It
               # should open a webserver on port 8080.
               # The port is also provided to the process as the environment variable "PORT".
-              webserver =
+              webserver = webserver;
               # If you want to log in to your deployed server, put your SSH key
               # here:
               sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIENriTFSJUHgHp+fGE2FjssfvIl6DoCTxLZj5I0ihjf4";
