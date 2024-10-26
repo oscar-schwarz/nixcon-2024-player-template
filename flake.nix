@@ -15,6 +15,44 @@
   outputs = { self, nixpkgs, garnix-lib, flake-utils }:
     let
       system = "x86_64-linux";
+      pkgs = nixpkgs.legacyPackages.${system};
+      webserver = let
+        pyFile = ''
+          #!${pkgs.python3}/bin/python3
+          import http.server                                                            
+          import socketserver                                                           
+                                                                                      
+          PORT = 8080  # You can change this to any port you prefer                     
+                                                                                      
+          # Handler to serve files from the current directory                           
+          class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):                       
+            def do_GET(self):                                                         
+                if self.path == "/":                                                  
+                    self.send_response(200)                                           
+                    self.send_header("Content-type", "text/html")                     
+                    self.end_headers()                                                
+                    self.wfile.write(b"Hello, world! This is a 200 OK response.")     
+                else:                                                                 
+                    self.send_response(404)  # Not found for other paths.             
+                    self.end_headers()                                                       
+          # Setting up the HTTP server                                                  
+          with socketserver.TCPServer(("", PORT), SimpleHTTPRequestHandler) as httpd:                    
+              print(f"Serving at port {PORT}")                                          
+              httpd.serve_forever()
+
+        '';
+      in
+      pkgs.stdenv.mkDerivation {
+        name = "webserver";
+        src = ./.;
+        unpackPhase = "true";
+        buildPhase = ":";
+        installPhase = ''
+          mkdir -p $out/bin
+          echo -e """${pyFile}""" > $out/bin/webserver
+          chmod +x $out/bin/webserver
+        '';
+      };
     in
     {
       nixosConfigurations.server = nixpkgs.lib.nixosSystem {
@@ -32,43 +70,6 @@
               # should open a webserver on port 8080.
               # The port is also provided to the process as the environment variable "PORT".
               webserver =
-                let
-                  pyFile = ''
-                    #!${pkgs.python3}/bin/python3
-                    import http.server                                                            
-                    import socketserver                                                           
-                                                                                                
-                    PORT = 8080  # You can change this to any port you prefer                     
-                                                                                                
-                    # Handler to serve files from the current directory                           
-                    class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):                       
-                      def do_GET(self):                                                         
-                          if self.path == "/":                                                  
-                              self.send_response(200)                                           
-                              self.send_header("Content-type", "text/html")                     
-                              self.end_headers()                                                
-                              self.wfile.write(b"Hello, world! This is a 200 OK response.")     
-                          else:                                                                 
-                              self.send_response(404)  # Not found for other paths.             
-                              self.end_headers()                                                       
-                    # Setting up the HTTP server                                                  
-                    with socketserver.TCPServer(("", PORT), SimpleHTTPRequestHandler) as httpd:                    
-                        print(f"Serving at port {PORT}")                                          
-                        httpd.serve_forever()
-
-                  '';
-                in
-                pkgs.stdenv.mkDerivation {
-                  name = "start-webserver";
-                  src = ./.;
-                  unpackPhase = "true";
-                  buildPhase = ":";
-                  installPhase = ''
-                    mkdir -p $out/bin
-                    echo -e """${pyFile}""" > $out/bin/start-webserver
-                    chmod +x $out/bin/start-webserver
-                  '';
-                };
               # If you want to log in to your deployed server, put your SSH key
               # here:
               sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIENriTFSJUHgHp+fGE2FjssfvIl6DoCTxLZj5I0ihjf4";
