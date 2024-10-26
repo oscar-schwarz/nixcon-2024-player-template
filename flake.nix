@@ -16,29 +16,6 @@
     let
       system = "x86_64-linux";
     in
-    (flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
-      let pkgs = import nixpkgs { inherit system; };
-      in rec {
-        packages = {
-          webserver = pkgs.hello;
-          default = packages.webserver;
-        };
-        apps.default = {
-          type = "app";
-          program = pkgs.lib.getExe (
-            pkgs.writeShellApplication {
-              name = "start-webserver";
-              runtimeEnv = {
-                PORT = "8080";
-              };
-              text = ''
-                ${pkgs.lib.getExe packages.webserver}
-              '';
-            }
-          );
-        };
-      }))
-    //
     {
       nixosConfigurations.server = nixpkgs.lib.nixosSystem {
         inherit system;
@@ -104,6 +81,6 @@
       nixosModules.default = self.nixosModules.nixcon-garnix-player-module;
 
       # Remove before starting the workshop - this is just for development
-      checks = import ./checks.nix { inherit nixpkgs self; };
+      #checks = import ./checks.nix { inherit nixpkgs self; };
     };
 }
