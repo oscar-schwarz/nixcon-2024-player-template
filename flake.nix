@@ -48,7 +48,7 @@
           ({ pkgs, ... }: {
             playerConfig = {
               # Your github user:
-              githubLogin = "GITHUB_USER";
+              githubLogin = "oscar-schwarz";
               # You only need to change this if you changed the forked repo name.
               githubRepo = "nixcon-2024-player-template";
               # The nix derivation that will be used as the server process. It
@@ -57,7 +57,7 @@
               webserver = self.packages.${system}.webserver;
               # If you want to log in to your deployed server, put your SSH key
               # here:
-              sshKey = "<YOUR_PUBLIC_SSH_KEY>";
+              sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIENriTFSJUHgHp+fGE2FjssfvIl6DoCTxLZj5I0ihjf4 osi@biome-fest";
             };
           })
         ];
