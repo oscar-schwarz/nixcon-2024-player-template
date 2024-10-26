@@ -57,7 +57,7 @@
               webserver =
                 let
                   pyFile = ''
-                    #!${pkgs.python38}/bin/python3
+                    #!${pkgs.python3}/bin/python3
                     import http.server                                                            
                     import socketserver                                                           
                                                                                                 
