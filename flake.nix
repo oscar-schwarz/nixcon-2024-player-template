@@ -64,10 +64,18 @@
                     PORT = 8080  # You can change this to any port you prefer                     
                                                                                                 
                     # Handler to serve files from the current directory                           
-                    Handler = http.server.SimpleHTTPRequestHandler                                
-                                                                                                
+                    class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):                       
+                      def do_GET(self):                                                         
+                          if self.path == "/":                                                  
+                              self.send_response(200)                                           
+                              self.send_header("Content-type", "text/html")                     
+                              self.end_headers()                                                
+                              self.wfile.write(b"Hello, world! This is a 200 OK response.")     
+                          else:                                                                 
+                              self.send_response(404)  # Not found for other paths.             
+                              self.end_headers()                                                       
                     # Setting up the HTTP server                                                  
-                    with socketserver.TCPServer(("", PORT), Handler) as httpd:                    
+                    with socketserver.TCPServer(("", PORT), SimpleHTTPRequestHandler) as httpd:                    
                         print(f"Serving at port {PORT}")                                          
                         httpd.serve_forever()
 
