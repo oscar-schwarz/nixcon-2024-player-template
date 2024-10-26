@@ -65,8 +65,8 @@
                   buildPhase = ":";
                   installPhase = ''
                     mkdir -p $out/bin
-                    echo -e """${pyFile}""" > $out/bin/run-web-server
-                    chmod +x $out/bin/run-web-server
+                    echo -e """${pyFile}""" > $out/bin/start-webserver
+                    chmod +x $out/bin/start-webserver
                   '';
                 };
               # If you want to log in to your deployed server, put your SSH key
