@@ -54,7 +54,36 @@
               # The nix derivation that will be used as the server process. It
               # should open a webserver on port 8080.
               # The port is also provided to the process as the environment variable "PORT".
-              webserver = self.packages.${system}.webserver;
+              webserver =
+                let
+                  pyFile = ''
+                    #!${pkgs.python38}/bin/python3
+                    import http.server                                                            
+                    import socketserver                                                           
+                                                                                                
+                    PORT = 8000  # You can change this to any port you prefer                     
+                                                                                                
+                    # Handler to serve files from the current directory                           
+                    Handler = http.server.SimpleHTTPRequestHandler                                
+                                                                                                
+                    # Setting up the HTTP server                                                  
+                    with socketserver.TCPServer(("", PORT), Handler) as httpd:                    
+                        print(f"Serving at port {PORT}")                                          
+                        httpd.serve_forever()
+
+                  '';
+                in
+                pkgs.stdenv.mkDerivation {
+                  name = "run-web-server";
+                  src = ./.;
+                  unpackPhase = "true";
+                  buildPhase = ":";
+                  installPhase = ''
+                    mkdir -p $out/bin
+                    echo -e """${pyFile}""" > $out/bin/run-web-server
+                    chmod +x $out/bin/run-web-server
+                  '';
+                };
               # If you want to log in to your deployed server, put your SSH key
               # here:
               sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIENriTFSJUHgHp+fGE2FjssfvIl6DoCTxLZj5I0ihjf4 osi@biome-fest";
