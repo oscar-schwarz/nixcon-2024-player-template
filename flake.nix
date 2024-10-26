@@ -74,7 +74,7 @@
                   '';
                 in
                 pkgs.stdenv.mkDerivation {
-                  name = "run-web-server";
+                  name = "start-webserver";
                   src = ./.;
                   unpackPhase = "true";
                   buildPhase = ":";
