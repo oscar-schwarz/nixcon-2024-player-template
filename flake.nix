@@ -71,7 +71,7 @@
                 };
               # If you want to log in to your deployed server, put your SSH key
               # here:
-              sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIENriTFSJUHgHp+fGE2FjssfvIl6DoCTxLZj5I0ihjf4 osi@biome-fest";
+              sshKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIENriTFSJUHgHp+fGE2FjssfvIl6DoCTxLZj5I0ihjf4";
             };
           })
         ];
